@@ -27,8 +27,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(LocalDateTime createdAt, OrderStatus status, BigDecimal total) {
-        this.createdAt = createdAt;
+    public Order( OrderStatus status, BigDecimal total) {
+        this.createdAt = LocalDateTime.now();
         this.status = status;
         this.total = total;
     }
@@ -36,7 +36,7 @@ public class Order {
     public Long getId() {
         return id;
     }
-    
+
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
