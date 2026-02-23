@@ -18,4 +18,30 @@ public class UserRequestDTO {
 
     @NotNull(message = "Role é obrigatorio")
     private UserRole role;
+
+    public UserRequestDTO() {
+    }
+
+    public UserRequestDTO(String name, String email, String password, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
 }

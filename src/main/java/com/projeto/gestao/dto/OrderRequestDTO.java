@@ -14,21 +14,21 @@ public class OrderRequestDTO {
 
     @NotEmpty(message = "Pedido de conter pelo menos um item")
     @Valid
-    private List<OrderItemRequestDTO> orders;
+    private List<OrderItemRequestDTO> items;
 
     public OrderRequestDTO() {
     }
 
-    public OrderRequestDTO(Long userId, List<OrderItemRequestDTO> orders) {
+    public OrderRequestDTO(Long userId, List<OrderItemRequestDTO> items) {
         this.userId = userId;
-        this.orders = orders;
+        this.items = items;
     }
 
     public Long getUserId() {
         return userId;
     }
 
-    public List<OrderItemRequestDTO> getOrders() {
-        return orders;
+    public List<OrderItemRequestDTO> getItems() {
+        return items;
     }
 }
