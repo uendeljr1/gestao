@@ -19,10 +19,15 @@ public class OrderItem {
     @Column(nullable = false,precision = 10,scale = 2)
     private BigDecimal unitPrice;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id",nullable = false)
+    private Order order;
+
     public OrderItem() {
     }
 
-    public OrderItem(Integer quantity, BigDecimal unitPrice) {
+    public OrderItem(Order order,Integer quantity, BigDecimal unitPrice) {
+        this.order = order;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
@@ -46,5 +51,13 @@ public class OrderItem {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }
