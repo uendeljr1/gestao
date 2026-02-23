@@ -78,4 +78,12 @@ public class Order {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public List<OrderItem> getOrderItem() {
+        return orderItem;
+    }
+
+    public void setOrderItem(List<OrderItem> orderItem) {
+        this.orderItem = orderItem;
+    }
 }
