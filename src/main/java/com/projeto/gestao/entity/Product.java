@@ -3,6 +3,7 @@ package com.projeto.gestao.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -23,6 +24,9 @@ public class Product {
 
     @Column(nullable = false)
     private int stock;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> items;
 
     public Product() {
     }
