@@ -24,11 +24,16 @@ public class Order {
     @Column(nullable = false,precision = 10,scale = 2)
     private BigDecimal total;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
+
     public Order() {
     }
 
-    public Order( OrderStatus status, BigDecimal total) {
+    public Order( User user,OrderStatus status, BigDecimal total) {
         this.createdAt = LocalDateTime.now();
+        this.user = user;
         this.status = status;
         this.total = total;
     }
@@ -60,5 +65,13 @@ public class Order {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
