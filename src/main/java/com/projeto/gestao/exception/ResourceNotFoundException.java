@@ -1,7 +1,9 @@
 package com.projeto.gestao.exception;
 
-public class ResourceNotFoundException extends RuntimeException{
-    public ResourceNotFoundException(String message) {
-        super(message);
+import org.springframework.http.HttpStatus;
+
+public class ResourceNotFoundException extends ApiException{
+    public ResourceNotFoundException(String message, HttpStatus status) {
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

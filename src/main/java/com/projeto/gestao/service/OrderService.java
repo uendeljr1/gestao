@@ -8,7 +8,6 @@ import com.projeto.gestao.mapper.OrderMapper;
 import com.projeto.gestao.repository.OrderRepository;
 import com.projeto.gestao.repository.ProductRepository;
 import com.projeto.gestao.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,7 +26,6 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO dto){
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
 
@@ -38,12 +36,11 @@ public class OrderService {
         List<OrderItem> items = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
-        for (OrderItemRequestDTO itemDto : dto.getItems()) {
-            Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Produto nao encontrado"));
+        for (OrderItemRequestDTO itemDto : dto.getItems()){
+            Product product = productRepository.findById(itemDto.getProductId()).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
             if (product.getStock() < itemDto.getQuantity()){
-                throw new RuntimeException("Estoque insuficiente para o produto " + product.getName());
+                throw new RuntimeException("Estoque insuficiente para o produto: " + product.getName());
             }
 
             product.setStock(product.getStock() - itemDto.getQuantity());
@@ -56,11 +53,14 @@ public class OrderService {
             items.add(item);
             total = total.add(subtotal);
         }
+
         order.setOrderItem(items);
         order.setTotal(total);
 
-
         return OrderMapper.toDto(orderRepository.save(order));
-        }
+
+    }
+
+
 
 }
