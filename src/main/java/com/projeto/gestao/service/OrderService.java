@@ -4,10 +4,13 @@ import com.projeto.gestao.dto.OrderItemRequestDTO;
 import com.projeto.gestao.dto.OrderRequestDTO;
 import com.projeto.gestao.dto.OrderResponseDTO;
 import com.projeto.gestao.entity.*;
+import com.projeto.gestao.exception.BusinessException;
+import com.projeto.gestao.exception.ResourceNotFoundException;
 import com.projeto.gestao.mapper.OrderMapper;
 import com.projeto.gestao.repository.OrderRepository;
 import com.projeto.gestao.repository.ProductRepository;
 import com.projeto.gestao.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,6 +29,7 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO dto){
         User user = userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
 
@@ -61,6 +65,52 @@ public class OrderService {
 
     }
 
+    public List<OrderResponseDTO> findAll(){
+        return orderRepository.findAll().stream().map(OrderMapper::toDto).toList();
+    }
 
+    public OrderResponseDTO findById(Long id){
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com id: " + id));
+
+        return OrderMapper.toDto(order);
+    }
+
+
+    @Transactional
+    public OrderResponseDTO updateStatus (Long id , OrderStatus status){
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com id: " + id));
+
+        if (order.getStatus() == OrderStatus.CANCELED){
+            throw new BusinessException("Pedido cancelado nao pode ser alterado");
+        }
+
+        order.setStatus(status);
+
+        return OrderMapper.toDto(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponseDTO cancelOrder(Long id){
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado com id: " + id));
+
+        if (order.getStatus() == OrderStatus.CANCELED){
+            throw new BusinessException("Pedido já esta cancelado");
+        }
+
+        if (order.getStatus() == OrderStatus.DELIVERED){
+            throw new BusinessException("Pedido entregue não pode ser cancelado");
+        }
+
+        for (OrderItem item : order.getOrderItem()){
+            Product product = item.getProduct();
+
+            product.setStock(product.getStock() + item.getQuantity());
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+
+        return OrderMapper.toDto(orderRepository.save(order));
+
+    }
 
 }
